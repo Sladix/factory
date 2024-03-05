@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://5a2ywjxrvbks"]
+
+[ext_resource type="Script" path="res://scripts/blocks/fx/welder_line.gd" id="1_5cpr2"]
+
+[sub_resource type="Gradient" id="Gradient_aqst2"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0.956863, 0.960784, 0.560784, 1, 1, 0.776471, 0.243137, 1, 0.956863, 0.960784, 0.560784, 1)
+
+[node name="Line2D" type="Line2D"]
+z_index = 2
+default_color = Color(1, 0.792157, 0, 0.556863)
+gradient = SubResource("Gradient_aqst2")
+script = ExtResource("1_5cpr2")

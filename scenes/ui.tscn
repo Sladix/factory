@@ -1,0 +1,118 @@
+[gd_scene load_steps=3 format=3 uid="uid://dcvpvoeog5q0v"]
+
+[ext_resource type="Script" path="res://scripts/factory/ui.gd" id="1_duma1"]
+[ext_resource type="Texture2D" uid="uid://brfbdb5hbxdcq" path="res://assets/sprites/grid.png" id="1_omuha"]
+
+[node name="UI" type="CanvasLayer"]
+script = ExtResource("1_duma1")
+
+[node name="Panel" type="Panel" parent="."]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -73.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="HFlowContainer2" type="HFlowContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 19.0
+offset_top = -15.5
+offset_right = 255.0
+offset_bottom = 17.5
+grow_vertical = 2
+theme_override_constants/h_separation = 15
+
+[node name="Start" type="Button" parent="Panel/HFlowContainer2"]
+layout_mode = 2
+text = "Start"
+
+[node name="Restart" type="Button" parent="Panel/HFlowContainer2"]
+layout_mode = 2
+text = "Restart"
+
+[node name="Reset" type="Button" parent="Panel/HFlowContainer2"]
+layout_mode = 2
+text = "Reset"
+
+[node name="HFlowContainer" type="HFlowContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -32.0
+offset_top = -31.5
+offset_right = 266.0
+offset_bottom = 32.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureButton" type="TextureButton" parent="Panel/HFlowContainer"]
+layout_mode = 2
+texture_normal = ExtResource("1_omuha")
+
+[node name="Label" type="Label" parent="Panel/HFlowContainer/TextureButton"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Conv"
+
+[node name="TextureButton2" type="TextureButton" parent="Panel/HFlowContainer"]
+layout_mode = 2
+texture_normal = ExtResource("1_omuha")
+
+[node name="Label" type="Label" parent="Panel/HFlowContainer/TextureButton2"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Rota"
+
+[node name="TextureButton3" type="TextureButton" parent="Panel/HFlowContainer"]
+layout_mode = 2
+texture_normal = ExtResource("1_omuha")
+
+[node name="Label" type="Label" parent="Panel/HFlowContainer/TextureButton3"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Weld"
+
+[connection signal="pressed" from="Panel/HFlowContainer2/Start" to="." method="_on_play"]
+[connection signal="pressed" from="Panel/HFlowContainer2/Restart" to="." method="_on_restart"]
+[connection signal="pressed" from="Panel/HFlowContainer2/Reset" to="." method="_on_reset"]
+[connection signal="pressed" from="Panel/HFlowContainer/TextureButton" to="." method="select_conveyor"]
+[connection signal="pressed" from="Panel/HFlowContainer/TextureButton2" to="." method="select_rotator"]
+[connection signal="pressed" from="Panel/HFlowContainer/TextureButton3" to="." method="select_welder"]

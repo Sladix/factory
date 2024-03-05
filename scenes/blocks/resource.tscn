@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://dr4m853qub551"]
+
+[ext_resource type="Script" path="res://scripts/blocks/resource_block.gd" id="1_r5j6y"]
+
+[node name="Resource" type="Polygon2D"]
+color = Color(1, 1, 1, 0)
+polygon = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+script = ExtResource("1_r5j6y")

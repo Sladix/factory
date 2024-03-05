@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://cmqmyg768xb5f"]
+
+[ext_resource type="Texture2D" uid="uid://brfbdb5hbxdcq" path="res://assets/sprites/grid.png" id="1_tk70b"]
+[ext_resource type="Script" path="res://scripts/blocks/dispenser.gd" id="1_y2y07"]
+
+[node name="Dispenser" type="Node2D"]
+script = ExtResource("1_y2y07")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+self_modulate = Color(0, 0.662745, 0.945098, 1)
+texture = ExtResource("1_tk70b")

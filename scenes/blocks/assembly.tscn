@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://7lmqgq63ro0a"]
+
+[ext_resource type="PackedScene" uid="uid://dr4m853qub551" path="res://scenes/blocks/resource.tscn" id="1_p4qvm"]
+[ext_resource type="Script" path="res://scripts/blocks/assembly.gd" id="1_yc7qm"]
+
+[node name="Assembly" type="Polygon2D"]
+z_index = 1
+texture_filter = 1
+texture_offset = Vector2(32, 32)
+uv = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+script = ExtResource("1_yc7qm")
+
+[node name="Resource" parent="." instance=ExtResource("1_p4qvm")]
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Area2D"]
+visible = false
+polygon = PackedVector2Array(-31, -31, 31, -31, 31, 31, -31, 31)
