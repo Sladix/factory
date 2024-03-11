@@ -3,6 +3,7 @@ class_name Assembly extends Polygon2D
 signal move_error(assembly:Assembly)
 
 @onready var area = $Area2D
+@onready var collision_shape = $Area2D/Shape
 
 var is_moving = false
 var tweens = []
@@ -18,11 +19,15 @@ func get_resources():
 			blocks.append(r)
 	return blocks
 
+func set_resources_color(c: Color):
+	#for r in get_resources():
+		#r.color = c
+	pass
+
 func translate_polygon(r: ResourceBlock):
 	var translated: PackedVector2Array = []
 	for p in r.polygon:
 		translated.append(p + r.position)
-		# store the color somehow ?
 	return translated
 
 func update_polygons():
@@ -31,17 +36,25 @@ func update_polygons():
 		var translated = translate_polygon(r)
 		merged += translated
 		
-	polygon = Geometry2D.convex_hull(merged)
-	var colors = {}
-	for p in polygon:
-		var target = null
-		for r: ResourceBlock in get_resources():
-			if Geometry2D.is_point_in_polygon(p, r.polygon):
-				if colors.get(p):
-					colors[p] = colors[p].lerp(r._color, 0.5)
-				else:	
-					colors[p] = r._color
-	vertex_colors = PackedColorArray(colors.values())
+	var shape = Geometry2D.convex_hull(merged)
+	var resized = Geometry2D.offset_polygon(shape, -2)[0]
+	collision_shape.polygon = resized
+	#var colors = {}
+	#for p in polygon:
+		#var target = null
+		#for r: ResourceBlock in get_resources():
+			#if Geometry2D.is_point_in_polygon(p, translate_polygon(r)):
+				#if colors.get(p):
+					#colors[p] = colors[p].lerp(r._color, 0.5)
+				#else:	
+					#colors[p] = r._color
+	#vertex_colors = PackedColorArray(colors.values())
+	#print("vertex colors count: ",vertex_colors.size())
+	#var v = vertex_colors
+	#v.append(v[0])
+	#vertex_colors = v
+	#print("vertex colors count: ",vertex_colors.size())
+	#print("convex hull polycount: ", polygon.size())
 	# Update the colors accoring to their place within the child resources
 	
 
@@ -60,7 +73,7 @@ func move(direction: Vector2):
 			next_block.move(direction)
 		
 		remove_pos()
-		var target = position + direction * GridManager.cell_size
+		var target = global_position + direction * GridManager.cell_size
 		await make_tween("position", target)
 		add_pos()
 		
@@ -77,21 +90,23 @@ func add_pos():
 	GridManager.add_block(self)
 
 # 1 = clockwise, -1 = counterClock
-func do_rotate(direction: int):
+func do_rotate(direction: int, from: Node2D):
 	remove_pos()
-	await make_tween("rotation", rotation + PI/2.0 * direction)
+	await make_tween("rotation", PI/2.0 * direction, from)
 	add_pos()
 
-func make_tween(property, value):
+func make_tween(property, value, object = self):
 	var t = create_tween()
 	tweens.push_back(t)
-	t.tween_property(self, property, value, Ticker.tick_duration - 0.01)	
+	t.tween_property(object, property, value, Ticker.tick_duration - 0.001)	.from_current()
 	await t.finished
 	tweens.erase(t)
 	
 
 func _on_collision(_area_rid: RID, _area: Area2D, _area_shape_index: int, _local_shape_index: int):
 	var parent = _area.get_parent()
+	if parent is Assembly:
+		dispatch_move_eror()
 	if not parent is Block:
 		return
 	

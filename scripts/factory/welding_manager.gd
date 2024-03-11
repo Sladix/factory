@@ -4,26 +4,21 @@ var welder_line = preload("res://scenes/blocks/fx/welder_line.tscn")
 
 var welder_groups = []  # List to store group IDs for each welder
 var welder_to_group = {}  # Dictionary to map welders to group IDs
-var group_to_line = {}  # Dictionary to map group to lines
 var welder_map = {}  # Dictionary to hold welder positions (grid based)
 
-const LINES_GROUP = "lines"
-
 signal welder_group_updated(group: Array)
+signal welder_group_removed(group: Array)
 
-func _physics_process(_delta):
-	for g in welder_groups:
-		if g.size() > 1 and !group_to_line.get(g):
-			create_line(g)
+var factory
+
+func _ready():
+	factory = $"/root/Factory"
 
 # Resets all the data structures
 func reset():
 	welder_map = {}
 	welder_groups = []
 	welder_to_group = {}
-	group_to_line = {}
-	for e in get_tree().get_nodes_in_group(LINES_GROUP):
-		e.queue_free()
 
 # Checks if a welder is connected to any welder in a group
 func are_welders_connected(welder: Welder, group: Array):
@@ -35,31 +30,12 @@ func are_welders_connected(welder: Welder, group: Array):
 
 # Removes a group and its associated line
 func remove_group(group: Array):
-	remove_line(group)
 	welder_groups.erase(group)
+	welder_group_removed.emit(group)
 
-# Removes a line associated with a group
-func remove_line(group: Array):
-	print(group_to_line)
-	var line = group_to_line.get(group)
-	print(line)
-	if line:
-		line.queue_free()
-		group_to_line.erase(group)
-
-# Creates a line for a group if the group has more than one welder
-func create_line(group: Array):
-	if group.size() < 2:
-		return
-	var line: WelderLine = welder_line.instantiate()
-	$"/root/Factory".add_child(line)
-	line.from_welder_group(group)
-	line.add_to_group(LINES_GROUP)
-	group_to_line[group] = line
 
 # Updates a group by removing and recreating its line
 func update_group(group: Array):
-	remove_line(group)
 	welder_group_updated.emit(group)
 
 # Finds the neighbors of a block
@@ -89,7 +65,9 @@ func find_adjacent_groups(building: Block, type: Script):
 
 # Removes a welder and updates the groups
 func remove_welder(welder: Welder):
-	var group = welder_to_group[welder]
+	var group = welder_to_group.get(welder)
+	if !group:
+		return
 	remove_group(group)
 	welder_map.erase(GridManager.normalize_pos(welder.target_point()))
 	welder_to_group.erase(welder)
@@ -147,6 +125,8 @@ func tick_welders():
 		for w: Welder in g:
 			var a = w.get_resource()
 			if a:
+				if !assemblies_to_merge.has(a):
+					assemblies_to_merge.append(a)
 				# check if assembly has neighbors in this welder group that is not part of it's assembly
 				for r in a.get_resources():
 					var neighbors = GridManager.find_neighbors_resources(r.global_position)
@@ -155,14 +135,11 @@ func tick_welders():
 						if target_welder and n != a and welder_to_group.get(target_welder) == g:
 							if !assemblies_to_merge.has(n):
 								assemblies_to_merge.append(n)
-							if !assemblies_to_merge.has(a):
-								assemblies_to_merge.append(a)
 		if assemblies_to_merge.size() > 1:
 			merge_assemblies(assemblies_to_merge)
 
 # Merges assemblies in a group
 func merge_assemblies(group):
-	print("merging ", group)
 	var first: Assembly = group[0]
 	for i in range(1,group.size()):
 		var assembly: Assembly = group[i]

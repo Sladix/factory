@@ -2,7 +2,7 @@ class_name Grid extends Node
 
 var resource_data = {}
 var building_data = {}
-var cell_size = 64
+var cell_size = 32
 
 func reset_buildings():
 	building_data = {}
@@ -15,7 +15,7 @@ func add_block(b):
 		for r in b.get_resources():
 			add_resource(b, r.global_position)
 	else:
-		add_building(b, b.position)
+		add_building(b, b.global_position)
 
 func add_building(b:Block, p:Vector2):
 	building_data[normalize_pos(p)] = b
@@ -23,7 +23,7 @@ func add_building(b:Block, p:Vector2):
 func add_resource(b:Assembly, p:Vector2):
 	resource_data[normalize_pos(p)] = b
 
-func get_resource(p:Vector2):
+func get_resource(p:Vector2) -> Assembly:
 	return resource_data.get(normalize_pos(p))
 
 func get_building(p:Vector2):
